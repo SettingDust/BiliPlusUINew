@@ -2912,6 +2912,8 @@
                                   border-radius: 2px;
                                   background-color: rgb(255, 255, 255);
                                   margin-bottom: 48px;
+                                  overflow-x: auto;
+                                  
                                 }
                                 .season {
                                   border-bottom: 4px solid rgb(164, 176, 190);
@@ -2921,6 +2923,7 @@
                                   width: 100%;
                                   align-items: center;
                                   justify-content: center;
+                                  overflow: visible;
                                 }
                                 .season.active {
                                   border-bottom: 4px solid rgb(0, 145, 248);
@@ -3181,17 +3184,8 @@
                                                             if (e.result.attention === '0') {
                                                                 $.getJSON('/me/bangumi/action/add/sid/' + bangumi_data.season_id, function (e) {
                                                                     if (e.code === 0) {
-                                                                        addSnackBar('正在追番...');
-                                                                        $.getJSON('/me/bangumi/action/check/sid/' + bangumi_data.season_id, function (e) {
-                                                                            if (e.code === 0) {
-                                                                                if (e.result.attention === '1') {
-                                                                                    fav.children().text('favorite');
-                                                                                    addSnackBar('追番成功');
-                                                                                }
-                                                                            } else {
-                                                                                addSnackBar(e.message + '[' + e.code + ']');
-                                                                            }
-                                                                        });
+                                                                        fav.children().text('favorite');
+                                                                        addSnackBar('追番成功');
                                                                     } else {
                                                                         addSnackBar(e.message + '[' + e.code + ']');
                                                                     }
@@ -3199,17 +3193,8 @@
                                                             } else {
                                                                 $.getJSON('/me/bangumi/action/del/sid/' + bangumi_data.season_id, function (e) {
                                                                     if (e.code === 0) {
-                                                                        addSnackBar('正在弃番...');
-                                                                        $.getJSON('/me/bangumi/action/check/sid/' + bangumi_data.season_id, function (e) {
-                                                                            if (e.code === 0) {
-                                                                                if (e.result.attention === '0') {
-                                                                                    fav.children().text('favorite_border');
-                                                                                    addSnackBar('弃番达成');
-                                                                                }
-                                                                            } else {
-                                                                                addSnackBar(e.message + '[' + e.code + ']');
-                                                                            }
-                                                                        });
+                                                                        fav.children().text('favorite_border');
+                                                                        addSnackBar('弃番达成');
                                                                     } else {
                                                                         addSnackBar(e.message + '[' + e.code + ']');
                                                                     }
@@ -3402,10 +3387,12 @@
                         {
                             addCss(`
                             #cover {
-                              width: 225px;
-                              height: 300px;
-                              min-width: 225px;
+                              width: 370px;
+                              min-width: 370px;
+                              min-height: 230px;
                               border-radius: 2px;
+                              background-size: cover;
+                              background-position: center;
                             }
                             #action {
                               padding-left: 12px;
@@ -3413,6 +3400,9 @@
                             }
                             #info {
                               display: flex;
+                            }
+                            #info>.container {
+                              padding-bottom: 8px;
                             }
                             #info>.container:before {
                               display: none;
@@ -3444,8 +3434,11 @@
                               line-height: 20px;
                               overflow: hidden;
                             }
+                            #desc>p {
+                              margin: 0;
+                            }
                             #title {
-                              margin-bottom: 4px;
+                              margin-bottom: 16px;
                               min-height: 0;
                               align-items: baseline;
                               display: block;
@@ -3457,7 +3450,7 @@
                               height: calc(100% - 48px);
                             }
                             #info>.container {
-                              max-width: calc(100% - 225px);
+                              max-width: calc(100% - 370px);
                             }
                             @media(max-width: 680px) {
                               #info>.container {
@@ -3493,18 +3486,18 @@
                         }
                         NProgress.start();
                         nav_title.text();
-                        let video_id = location.href.match(/av\d+/) + '';
+                        let video_id = location.href.match(/\d+/) + '';
                         let video_data;
                         NProgress.start();
                         addSnackBar('加载中...');
                         $.get('/api/view?id=' + video_id, function (data) {
-                            if (data.code === 0 && data.result) {
+                            if (!data.code) {
                                 video_data = data;
                                 //视频信息
                                 {
                                     let video_info = $('<div\>');
                                     let video_info_content = $('<div\>');
-                                    let video_cover = $('<img\>');
+                                    let video_cover = $('<div\>');
                                     let video_text = $('<div\>');
 
                                     let action = $('<div\>');
@@ -3529,8 +3522,15 @@
                                             video_title.attr('id', 'title');
 
                                             video_title.text(video_data.title);
+                                            video_title.attr('title', video_data.title);
                                             video_title.append(video_title);
                                             video_text.append(video_title);
+
+
+                                            if (video_data.title.startsWith('【')
+                                                || video_data.title.startsWith('《')
+                                                || video_data.title.startsWith('（'))
+                                                video_title.css('left', '-12px');
                                         }
 
                                         //数据
@@ -3558,7 +3558,7 @@
                                                 video_count_container.append(video_count_play);
 
                                                 let video_count_fav = video_count.clone();
-                                                video_count_fav.children('b').text('追番数');
+                                                video_count_fav.children('b').text('收藏数');
                                                 video_count_fav.children('span').text(
                                                     video_data.favorites > 1e4 - 1
                                                         ? video_data.favorites > 1e8 - 1
@@ -3583,14 +3583,13 @@
                                         //UP
                                         {
                                             video_author.text('UP：' + video_data.author);
-                                            video_author.attr('href','');
+                                            video_author.attr('href', '');
                                         }
 
                                         //介绍
                                         let video_desc = $('<div\>');
                                         video_desc.attr('id', 'desc');
                                         {
-                                            let video_desc_text = $('<span\>');
                                             let video_desc_text_row = $('<p\>');
                                             video_data.description.split('\n').forEach(function (e) {
                                                 let video_desc_text_row_clone = video_desc_text_row.clone();
@@ -3614,10 +3613,14 @@
                                         //标签
                                         {
                                             addCss(`
+                                                .tags {
+                                                  max-width: calc(100% - 36px);
+                                                  overflow: hidden;
+                                                }
                                                 .tag {
-                                                  border-radius: 14px;
+                                                  border-radius: 8px;
                                                   background-color: rgba(0, 145, 248, 0.87);
-                                                  height: 28px;
+                                                  height: 18px;
                                                   cursor: default;
                                                   display: inline-block;
                                                   margin: 2px 4px;
@@ -3629,25 +3632,30 @@
                                                   color: #fff;
                                                 }
                                                 .tag .text {
-                                                  display: inline-block;
-                                                  height: 28px;
-                                                  padding-right: 12px;
-                                                  padding-left: 12px;
-                                                  font-size: 14px;
-                                                  line-height: 28px;
+                                                  height: 18px;
+                                                  padding-right: 6px;
+                                                  padding-left: 6px;
+                                                  font-size: 12px;
+                                                  line-height: 18px;
                                                   vertical-align: middle;
+                                                  color: #fff !important;
                                                 }`, 'Tag');
+                                            let tags = $('<div\>');
                                             let tag = $('<div\>');
-                                            let tag_text = $('<span\>');
+                                            let tag_text = $('<a\>');
+                                            tags.addClass('tags');
                                             tag.addClass('tag');
                                             tag_text.addClass('text');
+                                            tag_text.attr('target', '_blank');
                                             tag.append(tag_text);
 
-                                            video_data.tags.forEach(function (e) {
+                                            video_data.tag.split(',').forEach(function (e) {
                                                 let tag_clone = tag.clone();
-                                                tag_clone.children().text(e.tag_name);
-                                                action.append(tag_clone);
+                                                tag_clone.children().text(e);
+                                                tag_clone.children().attr('href', '/api/do.php?act=search&source=bilibili&o=default&n=20&p=1&word=' + e);
+                                                tags.append(tag_clone);
                                             });
+                                            action.append(tags);
                                         }
                                         action.append(action_space);
 
@@ -3655,59 +3663,40 @@
                                         {
                                             let fav = icon.clone();
                                             fav.addClass('mid');
-                                            fav.attr('id', 'favorite');
+                                            fav.attr('id', 'star');
                                             fav.addClass('btn');
                                             if (!loginInfo.isLogin) fav.addClass('disable');
                                             action.append(fav);
-                                            $.getJSON('/me/bangumi/action/check/sid/' + video_data.season_id, function (e) {
+                                            $.getJSON('/me/favourite/action/check/av/' + video_data.id, function (e) {
+                                                console.log(e);
                                                 if (e.code === 0) {
-                                                    if (e.result.attention === '0')
-                                                        fav.children().text('favorite_border');
-                                                    else if (e.result.attention === '1') {
-                                                        fav.children().text('favorite');
+                                                    if (e.data.favoured)
+                                                        fav.children().text('star');
+                                                    else {
+                                                        fav.children().text('star_border');
                                                     }
-                                                    console.log(fav.children());
                                                 } else {
                                                     addSnackBar(e.message + '[' + e.code + ']');
+                                                    addSnackBar('获取收藏状态失败');
+                                                    fav.children().text('star_border');
+                                                    fav.addClass('disable');
                                                 }
                                             });
                                             fav.click(function () {
-                                                $.getJSON('/me/bangumi/action/check/sid/' + video_data.season_id, function (e) {
+                                                $.getJSON('/me/favourite/action/check/av/' + video_data.id, function (e) {
                                                     if (e.code === 0) {
-                                                        if (e.result.attention === '0') {
-                                                            $.getJSON('/me/bangumi/action/add/sid/' + video_data.season_id, function (e) {
+                                                        if (e.data.favoured) {
+                                                            $.getJSON('/me/favourite/action/dislike/av/' + video_data.id, function (e) {
                                                                 if (e.code === 0) {
-                                                                    addSnackBar('正在追番...');
-                                                                    $.getJSON('/me/bangumi/action/check/sid/' + video_data.season_id, function (e) {
-                                                                        if (e.code === 0) {
-                                                                            if (e.result.attention === '1') {
-                                                                                fav.children().text('favorite');
-                                                                                addSnackBar('追番成功');
-                                                                            }
-                                                                        } else {
-                                                                            addSnackBar(e.message + '[' + e.code + ']');
-                                                                        }
-                                                                    });
-                                                                } else {
-                                                                    addSnackBar(e.message + '[' + e.code + ']');
+                                                                    fav.children().text('star_border');
+                                                                    addSnackBar('取消成功');
                                                                 }
                                                             });
                                                         } else {
-                                                            $.getJSON('/me/bangumi/action/del/sid/' + video_data.season_id, function (e) {
+                                                            $.getJSON('/me/favourite/action/like/av/' + video_data.id, function (e) {
                                                                 if (e.code === 0) {
-                                                                    addSnackBar('正在弃番...');
-                                                                    $.getJSON('/me/bangumi/action/check/sid/' + video_data.season_id, function (e) {
-                                                                        if (e.code === 0) {
-                                                                            if (e.result.attention === '0') {
-                                                                                fav.children().text('favorite_border');
-                                                                                addSnackBar('弃番达成');
-                                                                            }
-                                                                        } else {
-                                                                            addSnackBar(e.message + '[' + e.code + ']');
-                                                                        }
-                                                                    });
-                                                                } else {
-                                                                    addSnackBar(e.message + '[' + e.code + ']');
+                                                                    fav.children().text('star');
+                                                                    addSnackBar('收藏成功');
                                                                 }
                                                             });
                                                         }
@@ -3725,9 +3714,10 @@
                                     video_info.append(video_cover);
                                     video_info.append(video_info_content);
                                     content.append(video_info);
-                                    $('<img/>').attr('src', video_data.cover.replace(/https?:/, 'https:')).load(function () {
+                                    $('<img/>').attr('src', video_data.pic.replace(/https?:/, 'https:')).load(function () {
                                         $(this).remove(); // prevent memory leaks as @benweet suggested
-                                        video_cover.attr('src', video_data.cover.replace(/https?:/, 'https:'));
+                                        video_cover.css('background-image', 'url("' + video_data.pic.replace(/https?:/, 'https:') + '")');
+                                        addSnackBar('加载完成');
                                         NProgress.done();
                                     });
                                 }
