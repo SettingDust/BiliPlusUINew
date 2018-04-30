@@ -23,6 +23,8 @@
     let body = $('body');
     let head = $('head');
 
+    let snackbars = $('<div\>');
+
     //搜索
     let source = {
         bilibili: 'bilibili',
@@ -275,7 +277,7 @@
               min-height: 100vh;
               overflow-y: hidden;
               align-items: stretch;
-              min-width: 360px;
+              min-width: 380px;
             }
             `, 'Main');
 
@@ -831,7 +833,7 @@
                       color: rgba(0,0,0,0.87);
                       margin-bottom: 100px;
                       max-width: 100%;
-                      min-width: 360px;
+                      min-width: 380px;
                       margin: 0 auto !important;
                       flex: 1 1 100%;
                       position: relative;
@@ -849,6 +851,9 @@
                 var content = $('<div\>');
                 content.addClass('content');
                 main.append(content);
+
+                snackbars.addClass('snackbars');
+                main.append(snackbars);
 
                 //卡片
                 {
@@ -1406,7 +1411,7 @@
                       right: 24px;
                       bottom: 24px;
                       justify-content: flex-end;
-                      z-index: 1200;
+                      z-index: 1500;
                       width: auto;
                     }
                     .action.container .btn {
@@ -1433,46 +1438,43 @@
                 //提示
                 {
                     addCss(`
-                    .snackbar {
-                      left: 0;
-                      right: 0;
-                      z-index: 1400;
-                      display: flex;
+                    .snackbars {
                       position: fixed;
+                      z-index: 1400;
+                      top: 76px;
+                      right: 0;
+                    }
+                    .snackbar {
+                      right: 0;
+                      display: flex;
                       align-items: center;
                       justify-content: flex-end;
                       transition: 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-                      top: 100vh;
+                      transform: translateX(100%);
+                      margin-top: 8px;
+                      margin-bottom: 8px;
                     }
                     .snackbar.active {
-                      transform: translateY(-100%);
+                      transform: translateX(0);
+                    }
+                    .snackbar.disable {
+                      height: 0;
                     }
                     .snackbar>.content {
-                      padding: 6px 24px;
+                      padding: 6px 16px;
                       flex-wrap: wrap;
                       box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
                       align-items: center;
                       pointer-events: initial;
                       font-size: 0.875rem;
                       background-color: rgb(47, 54, 64);
+                      min-width: 240px;
+                      border-top-left-radius: 2px;
+                      border-bottom-left-radius: 2px;
                     }
                     .snackbar>.content>.text {
                       padding: 8px 0;
                       color: #d04d74;
-                    }
-                    @media (min-width: 960px) {
-                      .snackbar>.content {
-                        min-width: 288px;
-                        max-width: 568px;
-                        border-radius: 2px;
-                      }
-                      .snackbar {
-                        left: auto;
-                        right: 24px;
-                      }
-                      .snackbar.active {
-                        transform: translateY(calc(-100% - 24px))
-                      }
                     }
                     `, 'Snackbar');
                 }
@@ -2047,9 +2049,10 @@
                         refresh_bangumi.append(refresh_bangumi_button);
 
                         refresh_bangumi_button.click(function () {
-                            location.href = '/task/bangumi.php';
+                            $.get('/task/bangumi.php', function () {
+                                location.reload();
+                            });
                         });
-
 
                         refreshBangumi();
 
@@ -2300,9 +2303,7 @@
                                     #code {
                                       min-width: 150px;
                                       height: 50px;
-                                    }
-                                    .code.textbox{
-                                      width: 200px;
+                                      cursor: pointer;
                                     }`, 'Code');
                                     //用户名邮箱
                                     {
@@ -2760,13 +2761,22 @@
                             content.append(search_content);
                             //更多
                             {
+                                addCss(`
+                                  #more {
+                                    font-size: 3rem;
+                                    width: 100%;
+                                  }
+                                `, 'More');
+
                                 let search_content_more = $('<div\>');
                                 let search_content_more_a = $('<a\>');
 
                                 search_content_more.addClass('center');
                                 search_content_more.addClass('container');
+                                search_content_more_a.attr('id', 'more');
                                 search_content_more_a.addClass('btn');
-                                search_content_more_a.text('加载更多');
+                                search_content_more_a.addClass('material-icons');
+                                search_content_more_a.text('more_horiz');
 
                                 search_content_more.append(search_content_more_a);
                                 content.append(search_content_more);
@@ -2780,6 +2790,37 @@
                                         + '&word=' + getUrlParam('word')
                                         + '&p=' + (++page), addSearchResult);
                                 });
+                                //回到顶部
+                                {
+                                    let buttom = $('<div\>');
+                                    let buttom_button = $('<button\>');
+                                    let buttom_text = $('<span\>');
+                                    let buttom_top = buttom_button.clone();
+                                    {
+                                        buttom.addClass('container');
+                                        buttom.addClass('action');
+                                        buttom_button.addClass('action');
+                                        buttom_button.addClass('btn');
+                                        buttom_text.addClass('material-icons');
+                                        buttom_top = buttom_button.clone();
+
+                                        buttom_top.append(buttom_text.clone().text('arrow_upward'));
+                                        buttom_top.hide();
+                                        buttom.append(buttom_top);
+                                    }
+
+                                    $(window).scroll(function () {
+                                        if ($(window).scrollTop() >= 120) {
+                                            buttom_top.show();
+                                        } else {
+                                            buttom_top.fadeOut(350);
+                                        }
+                                    });
+                                    buttom_top.click(function () {
+                                        $('html, body').animate({scrollTop: '0'}, 500);
+                                    });
+                                    content.append(buttom);
+                                }
                             }
                             waterfall = unsafeWindow.$('#search-content').waterfall();
 
@@ -2973,7 +3014,9 @@
                             let bangumi_data;
                             NProgress.start();
                             addSnackBar('加载中...');
-                            $.get('/api/bangumi?season=' + bangumi_id, function (data) {
+                            let refreshInfo = function (data) {
+                                seasons.children().remove();
+                                content.children().remove();
                                 if (data.code === 0 && data.result) {
                                     bangumi_data = data.result;
                                     nav_title.text(bangumi_data.title);
@@ -3293,56 +3336,62 @@
                                         }
                                         content.append(container);
                                     }
-                                    //Staff&Cast
-                                    {
+                                    if (bangumi_data.staff !== '' && bangumi_data.cast !== '') {
+                                        //Staff&Cast
                                         {
-                                            addCss(`
+                                            {
+                                                addCss(`
                                             .card.staff .card-text {
                                               width: 50%;
                                             }`, 'Staff');
-                                        }
+                                            }
 
-                                        let card = $('<div\>');
-                                        let card_content = $('<div\>');
-                                        let card_text_staff = $('<div\>');
-                                        let card_text_cast = $('<div\>');
+                                            let card = $('<div\>');
+                                            let card_content = $('<div\>');
+                                            let card_text_staff = $('<div\>');
+                                            let card_text_cast = $('<div\>');
 
-                                        card.addClass('card');
-                                        card.addClass('staff');
-                                        card_content.addClass('container');
-                                        card_text_staff.addClass('padding');
-                                        card_text_staff.addClass('mid');
-                                        card_text_staff.addClass('card-text');
-                                        card_text_cast.addClass('padding');
-                                        card_text_cast.addClass('mid');
-                                        card_text_cast.addClass('card-text');
+                                            card.addClass('card');
+                                            card.addClass('staff');
+                                            card_content.addClass('container');
+                                            card_text_staff.addClass('padding');
+                                            card_text_staff.addClass('mid');
+                                            card_text_staff.addClass('card-text');
+                                            card_text_cast.addClass('padding');
+                                            card_text_cast.addClass('mid');
+                                            card_text_cast.addClass('card-text');
 
-                                        let staff = $('<h3\>');
-                                        staff.text('Staff');
-                                        card_text_staff.append(staff);
-                                        //staff
-                                        {
-                                            bangumi_data.staff.split('\n').forEach(function (e) {
-                                                let staff_row = $('<p\>');
-                                                staff_row.text(e);
-                                                card_text_staff.append(staff_row);
-                                            });
+                                            if (bangumi_data.staff !== '') {
+                                                let staff = $('<h3\>');
+                                                staff.text('Staff');
+                                                card_text_staff.append(staff);
+                                                //staff
+                                                {
+                                                    bangumi_data.staff.split('\n').forEach(function (e) {
+                                                        let staff_row = $('<p\>');
+                                                        staff_row.text(e);
+                                                        card_text_staff.append(staff_row);
+                                                    });
+                                                }
+                                            }
+                                            if (bangumi_data.cast !== '') {
+                                                let cast = $('<h3\>');
+                                                cast.text('Cast');
+                                                card_text_cast.append(cast);
+                                                //cast
+                                                {
+                                                    bangumi_data.actor.forEach(function (e) {
+                                                        let cast_row = $('<p\>');
+                                                        cast_row.text(e.role + '：' + e.actor);
+                                                        card_text_cast.append(cast_row);
+                                                    })
+                                                }
+                                            }
+                                            card_content.append(card_text_staff);
+                                            card_content.append(card_text_cast);
+                                            card.append(card_content);
+                                            content.append(card);
                                         }
-                                        let cast = $('<h3\>');
-                                        cast.text('Cast');
-                                        card_text_cast.append(cast);
-                                        //cast
-                                        {
-                                            bangumi_data.actor.forEach(function (e) {
-                                                let cast_row = $('<p\>');
-                                                cast_row.text(e.role + '：' + e.actor);
-                                                card_text_cast.append(cast_row);
-                                            })
-                                        }
-                                        card_content.append(card_text_staff);
-                                        card_content.append(card_text_cast);
-                                        card.append(card_content);
-                                        content.append(card);
                                     }
                                     //回到顶部
                                     {
@@ -3379,352 +3428,477 @@
                                 } else {
                                     addSnackBar(data.message + '[' + data.code + ']');
                                 }
-                            });
+                            };
+                            getjson('/api/bangumi?season=' + bangumi_id, refreshInfo);
                         }
                     }
                     //视频
                     else if (location.href.indexOf('/video/av') !== -1) {
                         {
                             addCss(`
-                            #cover {
-                              width: 370px;
-                              min-width: 370px;
-                              min-height: 230px;
-                              border-radius: 2px;
-                              background-size: cover;
-                              background-position: center;
-                            }
-                            #action {
-                              padding-left: 12px;
-                              padding-right: 12px;
-                            }
-                            #info {
-                              display: flex;
-                            }
-                            #info>.container {
-                              padding-bottom: 8px;
-                            }
-                            #info>.container:before {
-                              display: none;
-                            }
-                            #count {
-                              padding-top: 16px;
-                              padding-bottom: 16px; 
-                            }
-                            #type {
-                              margin-right: 4px;
-                            }
-                            .video-data {
-                              font-size: 0.785em;
-                              border-radius: 12px;
-                              height: 24px;
-                              display: flex;
-                              padding: 0 16px;
-                              margin-left: 4px;
-                              margin-right: 4px;
-                              background-color: rgba(0, 145, 248, 0.87);
-                              color: #fff;
-                            }
-                            #favorite {
-                              color:  #d04d74;
-                            }
-                            #desc {
-                              font-size: 14px;
-                              max-height: 80px;
-                              line-height: 20px;
-                              overflow: hidden;
-                            }
-                            #desc>p {
-                              margin: 0;
-                            }
                             #title {
                               margin-bottom: 16px;
                               min-height: 0;
                               align-items: baseline;
                               display: block;
+                              cursor: default;
                             }
-                            #title>h2 {
+                            #type {
                               margin-right: 4px;
+                              font-size: inherit;
                             }
-                            #text {
-                              height: calc(100% - 48px);
+                            #desc {
+                              word-break: break-word;
                             }
-                            #info>.container {
-                              max-width: calc(100% - 370px);
+                            #count {
+                              min-height: 0;
+                              width: auto;
                             }
-                            @media(max-width: 680px) {
-                              #info>.container {
-                                display: block;
-                                max-width: 100%;
-                              }
-                              #info {
-                                width: 100%;
-                                display: block;
-                              }
-                              #cover {
-                                width: 100%;
-                                height: auto;
-                              }
-                              #desc {
-                                max-height: none;
+                            #data {
+                              min-height: 0;
+                              align-items: baseline;
+                            }
+                            #data>#create {
+                              margin-left: 8px;
+                            }
+                            .video-data {
+                              font-size: 0.785em;
+                              border-radius: 4px;
+                              height: 24px;
+                              display: flex;
+                              padding: 0px 8px;
+                              margin-left: 4px;
+                              margin-right: 4px;
+                              background-color: rgba(140, 140, 140, 0.87);
+                              color: #fff;
+                            }
+                            .tags {
+                              flex-wrap: wrap;
+                              min-height: 0;
+                            }
+                            .tags>.tag {
+                              border-radius: 12px;
+                              border: solid 1px rgba(0,0,0,0.54);
+                              transition: 125ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+                              line-height: 18px;
+                              height: 20px;
+                              margin-right: 8px;
+                              margin-bottom: 2px;
+                              margin-top: 2px;
+                              padding: 0 12px;
+                              white-space: nowrap;
+                              -webkit-user-select: none;
+                              -moz-user-select: none;
+                              -ms-user-select: none;
+                              user-select: none;
+                              color: rgba(0,0,0,0.87);
+                              font-size: 0.785rem;
+                            }
+                            .tag:first-child {
+                              margin-left: 0;
+                            }
+                            .tags>.tag:hover {
+                              border-color: rgba(0, 145, 248, 0.87);
+                            }
+                            @media(max-width: 800px) {
+                              #data {
+                                flex-direction: column;
                               }
                               #count {
-                                justify-content: space-around;
-                                width: 100%;
+                                justify-content: flex-end;
+                                margin-top: 4px;
                               }
-                              .video-data {
-                                border-right: none;
-                                font-size: 0.785em;
-                                width: auto;
-                                padding: 0 8px;
-                              }
-                              .video-data:first-child {
-                                width: auto;
-                              }
+                            }
+                            .action.btn#favorite.active {
+                              color: rgb(243, 156, 18);
                             }
                             `, 'Video');
                         }
-                        NProgress.start();
-                        nav_title.text();
-                        let video_id = location.href.match(/\d+/) + '';
                         let video_data;
-                        NProgress.start();
-                        addSnackBar('加载中...');
-                        $.get('/api/view?id=' + video_id, function (data) {
+
+                        let action = $('<div\>');
+                        action.attr('id', 'action');
+                        action.addClass('action');
+                        action.addClass('container');
+
+                        let action_button = $('<button\>');
+                        let button_text = $('<span\>');
+                        action_button.append(button_text);
+                        button_text.addClass('material-icons');
+                        action_button.addClass('action');
+                        action_button.addClass('btn');
+
+                        let refreshVideo = function (data) {
+                            content.children().remove();
+                            action.children().remove();
+                            NProgress.start();
+                            addSnackBar('加载中...');
                             if (!data.code) {
                                 video_data = data;
+
+                                nav_title.text('[' + video_data.typename + ']' + video_data.title);
+
+                                let video_info = $('<div\>');
+                                video_info.addClass('container');
                                 //视频信息
                                 {
-                                    let video_info = $('<div\>');
-                                    let video_info_content = $('<div\>');
-                                    let video_cover = $('<div\>');
-                                    let video_text = $('<div\>');
-
-                                    let action = $('<div\>');
-
-                                    video_info.addClass('card');
-                                    video_info_content.addClass('container');
-                                    video_info_content.addClass('column');
-                                    video_text.addClass('padding');
-                                    video_text.addClass('mid');
-
-                                    video_cover.attr('id', 'cover');
-                                    video_text.attr('id', 'text');
-                                    video_info.attr('id', 'info');
-
-                                    //文本
+                                    let info_card = $('<div\>');
+                                    let info_card_text = $('<div\>');
+                                    info_card.addClass('card');
+                                    info_card.attr('id', 'info');
+                                    info_card_text.addClass('padding');
+                                    info_card_text.addClass('mid');
+                                    info_card_text.attr('id', 'text');
                                     {
-                                        //标题
-                                        {
-                                            let video_title = $('<h2\>');
-                                            video_title.addClass('container');
-                                            video_title.addClass('ellipsis');
-                                            video_title.attr('id', 'title');
+                                        let info_title = $('<h2\>');
+                                        info_title.attr('id', 'title');
+                                        info_title.addClass('container');
+                                        info_title.addClass('ellipsis');
+                                        info_title.text(video_data.title);
+                                        info_title.attr('title', video_data.title);
 
-                                            video_title.text(video_data.title);
-                                            video_title.attr('title', video_data.title);
-                                            video_title.append(video_title);
-                                            video_text.append(video_title);
+                                        let info_row = $('<div\>');
+                                        info_row.attr('id', 'data');
+                                        info_row.addClass('container');
 
-
-                                            if (video_data.title.startsWith('【')
-                                                || video_data.title.startsWith('《')
-                                                || video_data.title.startsWith('（'))
-                                                video_title.css('left', '-12px');
-                                        }
-
-                                        //数据
-                                        let video_count_container = $('<div\>');
-                                        video_count_container.addClass('container');
-                                        video_count_container.attr('id', 'count');
+                                        let info_up = $('<a\>');
+                                        info_up.text('UP: ' + video_data.author);
+                                        info_up.attr('href', '/space/' + video_data.mid);
+                                        let info_time = $('<span\>');
+                                        info_time.addClass('description');
+                                        info_time.attr('id', 'create');
+                                        info_time.text('投递时间：' + video_data.created_at);
+                                        let info_count = $('<div\>');
+                                        info_count.addClass('container');
+                                        info_count.attr('id', 'count');
                                         {
                                             let video_count = $('<div\>');
-                                            let video_count_type = $('<b\>');
-                                            let video_count_num = $('<span\>');
-                                            video_count.append(video_count_type);
-                                            video_count_type.attr('id', 'type');
-                                            video_count.addClass('center');
-                                            video_count.append(video_count_num);
                                             video_count.addClass('video-data');
+                                            video_count.addClass('center');
+
+                                            let video_count_type = $('<span\>');
+                                            video_count_type.addClass('material-icons');
+                                            video_count_type.attr('id', 'type');
+
+                                            let video_count_num = $('<span\>');
+                                            video_count_num.attr('id', 'number');
+
+                                            video_count.append(video_count_type);
+                                            video_count.append(video_count_num);
                                             {
+                                                //播放量
                                                 let video_count_play = video_count.clone();
-                                                video_count_play.children('b').text('播放量');
-                                                video_count_play.children('span').text(
+                                                video_count_play.children('#type').text('play_arrow');
+                                                video_count_play.children('#number').text(
                                                     video_data.play > 1e4 - 1
                                                         ? video_data.play > 1e8 - 1
                                                         ? Math.floor(video_data.play / 1e8 * 10) / 10 + '亿'
                                                         : Math.floor(video_data.play / 1e4 * 10) / 10 + '万'
                                                         : video_data.play);
-                                                video_count_container.append(video_count_play);
-
-                                                let video_count_fav = video_count.clone();
-                                                video_count_fav.children('b').text('收藏数');
-                                                video_count_fav.children('span').text(
-                                                    video_data.favorites > 1e4 - 1
-                                                        ? video_data.favorites > 1e8 - 1
-                                                        ? Math.floor(video_data.favorites / 1e8 * 10) / 10 + '亿'
-                                                        : Math.floor(video_data.favorites / 1e4 * 10) / 10 + '万'
-                                                        : video_data.favorites);
-                                                video_count_container.append(video_count_fav);
-
+                                                info_count.append(video_count_play);
+                                                //弹幕
                                                 let video_count_danmaku = video_count.clone();
-                                                video_count_danmaku.children('b').text('弹幕数');
-                                                video_count_danmaku.children('span').text(
+                                                video_count_danmaku.children('#type').text('question_answer');
+                                                video_count_danmaku.children('#number').text(
                                                     video_data.video_review > 1e4 - 1
                                                         ? video_data.video_review > 1e8 - 1
                                                         ? Math.floor(video_data.video_review / 1e8 * 10) / 10 + '亿'
                                                         : Math.floor(video_data.video_review / 1e4 * 10) / 10 + '万'
                                                         : video_data.video_review);
-                                                video_count_container.append(video_count_danmaku);
+                                                info_count.append(video_count_danmaku);
+                                                //收藏
+                                                let video_count_fav = video_count.clone();
+                                                video_count_fav.children('#type').text('star');
+                                                video_count_fav.children('#number').text(
+                                                    video_data.favorites > 1e4 - 1
+                                                        ? video_data.favorites > 1e8 - 1
+                                                        ? Math.floor(video_data.favorites / 1e8 * 10) / 10 + '亿'
+                                                        : Math.floor(video_data.favorites / 1e4 * 10) / 10 + '万'
+                                                        : video_data.favorites);
+                                                info_count.append(video_count_fav);
+                                                //硬币
+                                                let video_count_coin = video_count.clone();
+                                                video_count_coin.children('#type').text('monetization_on');
+                                                video_count_coin.children('#number').text(
+                                                    video_data.coins > 1e4 - 1
+                                                        ? video_data.coins > 1e8 - 1
+                                                        ? Math.floor(video_data.coins / 1e8 * 10) / 10 + '亿'
+                                                        : Math.floor(video_data.coins / 1e4 * 10) / 10 + '万'
+                                                        : video_data.coins);
+                                                info_count.append(video_count_coin);
                                             }
                                         }
-
-                                        let video_author = $('<a\>');
-                                        //UP
-                                        {
-                                            video_author.text('UP：' + video_data.author);
-                                            video_author.attr('href', '');
-                                        }
-
-                                        //介绍
-                                        let video_desc = $('<div\>');
-                                        video_desc.attr('id', 'desc');
-                                        {
-                                            let video_desc_text_row = $('<p\>');
-                                            video_data.description.split('\n').forEach(function (e) {
-                                                let video_desc_text_row_clone = video_desc_text_row.clone();
-                                                video_desc_text_row_clone.text(e);
-                                                video_desc.append(video_desc_text_row_clone);
-                                            });
-                                        }
-
-                                        video_text.append(video_author);
-                                        video_text.append(video_count_container);
-                                        video_text.append(video_desc);
+                                        info_card_text.append(info_title);
+                                        info_row.append(info_up);
+                                        info_row.append(info_time);
+                                        info_row.append(whitespace.clone());
+                                        info_row.append(info_count);
+                                        info_card_text.append(info_row);
                                     }
-                                    //底部
+                                    info_card.append(info_card_text);
+                                    video_info.append(info_card);
+                                }
+                                content.append(video_info);
+                                //视频
+                                let video = $('<div\>');
+                                video.attr('id','player_container');
+                                //TODO 严格按照格式来一波 脑壳痛
+                                {
+                                    let player = $('<iframe\>');
+                                    let page = video_data.list[0];
+                                    player.attr('src', '/api/h5play-vupload.php?iframe' +
+                                        '&tid=' + video_data.tid +
+                                        '&cid=' + page.cid +
+                                        '&type=' + page.type +
+                                        '&vid=' + page.vid
+                                    );
+                                    video.append(player);
+                                }
+                                content.append(video);
+                                //分页
+                                {
+                                    addCss(`
+                                    .pages {
+                                      flex-wrap: wrap;
+                                    }
+                                    .page {
+                                      margin-right: 16px;
+                                    }
+                                    .page:last-child {
+                                      margin-right: 0;
+                                    }
+                                    .page .container {
+                                      width: auto;
+                                      min-height: 0;
+                                      align-items: center;
+                                      padding-left: 16px;
+                                      padding-right: 16px;
+                                    }
+                                    .page .action>.btn {
+                                      margin-left: 4px;
+                                      margin-right: 4px;
+                                      text-transform: none;
+                                      font-size: 24px;
+                                      padding: 8px;
+                                      border-radius: 50%;
+                                    }
+                                    .page .action {
+                                      padding: 0;
+                                      min-height: 0;
+                                    }
+                                    `, 'Pages');
+
+                                    let pages = $('<div\>');
+                                    pages.addClass('container');
+
+                                    let page = $('<div\>');
+                                    page.addClass('card');
+                                    page.addClass('page');
+                                    let page_content = $('<div\>');
+                                    page_content.addClass('padding');
+                                    page_content.addClass('container');
+                                    page.append(page_content);
+                                    let page_title = $('<span\>');
+                                    page_title.addClass('ellipsis');
+                                    page_content.append(page_title);
+                                    page_content.append(whitespace.clone());
+                                    let page_action = $('<div\>');
+                                    page_action.addClass('action');
+                                    page_content.append(page_action);
+                                    let page_action_button = $('<button\>');
+                                    page_action_button.addClass('btn');
+                                    page_action_button.addClass('circle');
+                                    page_action_button.addClass('material-icons');
+
+                                    //播放
+                                    let page_action_button_play = page_action_button.clone();
+                                    page_action_button_play.text('play_arrow');
+                                    page_action_button_play.attr('id', 'play');
+                                    page_action.append(page_action_button_play);
+
+
+                                    body.on('click', '#play', function () {
+
+                                    });
+
+                                    //下载
+                                    let page_action_button_download = page_action_button.clone();
+                                    page_action_button_download.text('file_download');
+                                    page_action_button_download.attr('id', 'download');
+                                    page_action.append(page_action_button_download);
+
+                                    //弹幕
+                                    let page_action_button_danmaku = page_action_button.clone();
+                                    page_action_button_danmaku.text('question_answer');
+                                    page_action_button_download.attr('id', 'danmaku');
+                                    page_action.append(page_action_button_danmaku);
+
+
+                                    page_content.append(page_action);
+
+                                    video_data.list.forEach(function (e) {
+                                        let page_clone = page.clone();
+                                        page_clone.attr('data-page', e.page);
+                                        page_clone.attr('data-type', e.type);
+                                        page_clone.attr('data-cid', e.cid);
+                                        page_clone.attr('data-vid', e.vid);
+                                        if (e.part === '')
+                                            page_clone.children('div').children('span').text(video_data.title);
+                                        else
+                                            page_clone.children('div').children('span').text(e.part);
+                                        pages.append(page_clone);
+                                    });
+
+                                    content.append(pages);
+                                }
+                                let desc_card = $('<div\>');
+                                //简介
+                                {
+                                    desc_card.addClass('card');
+                                    let desc_tags = $('<div\>');
+                                    desc_tags.addClass('tags');
+                                    desc_tags.addClass('container');
+                                    desc_tags.addClass('padding');
+                                    desc_tags.addClass('mid');
+
+                                    let desc_tag = $('<a\>');
+                                    let tag_text = $('<span\>');
+                                    desc_tag.addClass('tag');
+                                    desc_tag.attr('target', '_blank');
+                                    desc_tag.append(tag_text);
+
+                                    video_data.tag.split(',').forEach(function (e) {
+                                        let desc_tag_clone = desc_tag.clone();
+                                        desc_tag_clone.children('span').text(e);
+                                        desc_tag_clone.attr('href', '/api/do.php?act=search&source=bilibili&o=default&n=20&p=1&word=' + e);
+                                        desc_tags.append(desc_tag_clone);
+                                    });
+
+                                    let desc_text_container = $('<div\>');
+                                    let desc_text = $('<p\>');
+                                    desc_text_container.addClass('container');
+                                    desc_text_container.addClass('column');
+                                    desc_text_container.addClass('padding');
+                                    desc_text_container.addClass('mid');
+                                    desc_text_container.attr('id', 'desc');
+
+                                    video_data.description.split('\n').forEach(function (e) {
+                                        let desc_text_clone = desc_text.clone();
+                                        desc_text_clone.text(e);
+                                        desc_text_container.append(desc_text_clone);
+                                    });
+                                    desc_card.append(desc_tags);
+                                    desc_card.append(desc_text_container);
+                                }
+                                //动作
+                                {
+                                    //主页
                                     {
-                                        let action_space = $('<div\>');
-                                        action.addClass('container');
-                                        action.addClass('center');
-                                        action.attr('id', 'action');
-                                        action_space.addClass('flex-whitespace');
-
-                                        //标签
-                                        {
-                                            addCss(`
-                                                .tags {
-                                                  max-width: calc(100% - 36px);
-                                                  overflow: hidden;
+                                        let action_home = action_button.clone();
+                                        action_home.children().text('home');
+                                        action_home.click(function () {
+                                            window.open('https://bilibili.com/av' + video_data.id);
+                                        });
+                                        action.append(action_home);
+                                    }
+                                    //手机
+                                    {
+                                        let action_app = action_button.clone();
+                                        action_app.children().text('phone_android');
+                                        action_app.click(function () {
+                                            window.open('bilibili://video/' + video_data.id);
+                                        });
+                                        action.append(action_app);
+                                    }
+                                    //投币
+                                    {
+                                        let action_coin = action_button.clone();
+                                        action_coin.children().text('monetization_on');
+                                        action_coin.click(function () {
+                                            $.getJSON('/me/coin/action/throw/aid/' + video_data.id, function (data) {
+                                                if (data.code === 0) {
+                                                    addSnackBar('投币成功！');
+                                                } else if (data.code === 34005) {
+                                                    addSnackBar('投币太多啦~');
+                                                } else {
+                                                    addSnackBar('投币失败，' + data.message + '[' + data.code + ']');
                                                 }
-                                                .tag {
-                                                  border-radius: 8px;
-                                                  background-color: rgba(0, 145, 248, 0.87);
-                                                  height: 18px;
-                                                  cursor: default;
-                                                  display: inline-block;
-                                                  margin: 2px 4px;
-                                                  white-space: nowrap;
-                                                  -webkit-user-select: none;
-                                                  -moz-user-select: none;
-                                                  -ms-user-select: none;
-                                                  user-select: none;
-                                                  color: #fff;
-                                                }
-                                                .tag .text {
-                                                  height: 18px;
-                                                  padding-right: 6px;
-                                                  padding-left: 6px;
-                                                  font-size: 12px;
-                                                  line-height: 18px;
-                                                  vertical-align: middle;
-                                                  color: #fff !important;
-                                                }`, 'Tag');
-                                            let tags = $('<div\>');
-                                            let tag = $('<div\>');
-                                            let tag_text = $('<a\>');
-                                            tags.addClass('tags');
-                                            tag.addClass('tag');
-                                            tag_text.addClass('text');
-                                            tag_text.attr('target', '_blank');
-                                            tag.append(tag_text);
-
-                                            video_data.tag.split(',').forEach(function (e) {
-                                                let tag_clone = tag.clone();
-                                                tag_clone.children().text(e);
-                                                tag_clone.children().attr('href', '/api/do.php?act=search&source=bilibili&o=default&n=20&p=1&word=' + e);
-                                                tags.append(tag_clone);
                                             });
-                                            action.append(tags);
-                                        }
-                                        action.append(action_space);
-
-                                        //动作
-                                        {
-                                            let fav = icon.clone();
-                                            fav.addClass('mid');
-                                            fav.attr('id', 'star');
-                                            fav.addClass('btn');
-                                            if (!loginInfo.isLogin) fav.addClass('disable');
-                                            action.append(fav);
-                                            $.getJSON('/me/favourite/action/check/av/' + video_data.id, function (e) {
-                                                console.log(e);
-                                                if (e.code === 0) {
-                                                    if (e.data.favoured)
-                                                        fav.children().text('star');
-                                                    else {
-                                                        fav.children().text('star_border');
+                                        });
+                                        action.append(action_coin);
+                                    }
+                                    //收藏
+                                    {
+                                        let action_favorite = action_button.clone();
+                                        action_favorite.attr('id', 'favorite');
+                                        $.getJSON('/me/favourite/action/check/av/' + video_data.id, function (data) {
+                                            if (data.code === 0) {
+                                                if (data.data.favoured) {
+                                                    action_favorite.children().text('star');
+                                                    action_favorite.addClass('active');
+                                                } else {
+                                                    action_favorite.children().text('star_border');
+                                                    action_favorite.removeClass('active');
+                                                }
+                                            } else {
+                                                addSnackBar('获取收藏状态失败 ' + data.message + '[' + data.code + ']');
+                                                action_favorite.children().text('star_border');
+                                            }
+                                        });
+                                        action_favorite.click(function () {
+                                            $.getJSON('/me/favourite/action/check/av/' + video_data.id, function (data) {
+                                                if (data.code === 0) {
+                                                    if (data.data.favoured) {
+                                                        $.getJSON('/me/favourite/action/dislike/av/' + video_data.id, function (data) {
+                                                            if (data.code === 0) {
+                                                                addSnackBar('抛弃成功');
+                                                                action_favorite.removeClass('active');
+                                                                action_favorite.children().text('star_border');
+                                                            } else {
+                                                                addSnackBar('抛弃失败，' + data.message + '[' + data.code + ']');
+                                                            }
+                                                        });
+                                                    } else {
+                                                        $.getJSON('/me/favourite/action/like/av/' + video_data.id, function (data) {
+                                                            if (data.code === 0) {
+                                                                addSnackBar('收藏成功');
+                                                                action_favorite.addClass('active');
+                                                                action_favorite.children().text('star');
+                                                            } else {
+                                                                addSnackBar('收藏失败，' + data.message + '[' + data.code + ']');
+                                                            }
+                                                        })
                                                     }
                                                 } else {
-                                                    addSnackBar(e.message + '[' + e.code + ']');
-                                                    addSnackBar('获取收藏状态失败');
-                                                    fav.children().text('star_border');
-                                                    fav.addClass('disable');
+                                                    addSnackBar('获取收藏状态失败 ' + data.message + '[' + data.code + ']');
                                                 }
                                             });
-                                            fav.click(function () {
-                                                $.getJSON('/me/favourite/action/check/av/' + video_data.id, function (e) {
-                                                    if (e.code === 0) {
-                                                        if (e.data.favoured) {
-                                                            $.getJSON('/me/favourite/action/dislike/av/' + video_data.id, function (e) {
-                                                                if (e.code === 0) {
-                                                                    fav.children().text('star_border');
-                                                                    addSnackBar('取消成功');
-                                                                }
-                                                            });
-                                                        } else {
-                                                            $.getJSON('/me/favourite/action/like/av/' + video_data.id, function (e) {
-                                                                if (e.code === 0) {
-                                                                    fav.children().text('star');
-                                                                    addSnackBar('收藏成功');
-                                                                }
-                                                            });
-                                                        }
-                                                    } else {
-                                                        addSnackBar(e.message + '[' + e.code + ']');
-                                                    }
-                                                });
-                                            });
-                                        }
+                                        });
 
+                                        action.append(action_favorite);
                                     }
-
-                                    video_info_content.append(video_text);
-                                    video_info_content.append(action);
-                                    video_info.append(video_cover);
-                                    video_info.append(video_info_content);
-                                    content.append(video_info);
-                                    $('<img/>').attr('src', video_data.pic.replace(/https?:/, 'https:')).load(function () {
-                                        $(this).remove(); // prevent memory leaks as @benweet suggested
-                                        video_cover.css('background-image', 'url("' + video_data.pic.replace(/https?:/, 'https:') + '")');
-                                        addSnackBar('加载完成');
-                                        NProgress.done();
-                                    });
+                                    //刷新
+                                    {
+                                        let action_refresh = action_button.clone();
+                                        action_refresh.children().text('refresh');
+                                        action_refresh.click(function () {
+                                            getjson('/api/view?update=1&id=' + video_id, refreshVideo);
+                                        });
+                                        action.append(action_refresh);
+                                    }
+                                    content.append(action);
                                 }
+                                content.append(desc_card);
+                                addSnackBar('加载完成');
                             } else {
                                 addSnackBar(data.message + '[' + data.code + ']');
                             }
-                        });
+                            NProgress.done();
+                        };
+
+                        let video_id = location.href.match(/\d+/) + '';
+
+                        getjson('/api/view?id=' + video_id, refreshVideo);
                     }
                     //其他
                     else {
@@ -4066,18 +4240,29 @@
         snackbar_content_text.append(snackbar_content_text_span);
         snackbar_content.append(snackbar_content_text);
         snackbar.append(snackbar_content);
-
-        content.append(snackbar);
-        if ($(window).width() > 960)
-            snackbar.css('transform', 'translateY(calc(-' + $('.snackbar.active').length * 120 + '% - 100% - 24px))');
-        snackbar.addClass('active');
+        snackbars.append(snackbar);
+        let removeSnackbar = function () {
+            if (snackbars.children('.snackbar').length > 5) {
+                let current = snackbars.children('.snackbar:first');
+                current.removeClass('active');
+                current.addClass('disable');
+                setTimeout(function () {
+                    current.remove();
+                    removeSnackbar();
+                }, 250);
+            }
+        };
+        removeSnackbar();
         setTimeout(function () {
-            snackbar.css('transform', 'translateY(0)');
-            snackbar.removeClass('active');
+            snackbar.addClass('active');
             setTimeout(function () {
-                snackbar.remove();
-            }, 250);
-        }, 5000);
+                snackbar.removeClass('active');
+                snackbar.addClass('disable');
+                setTimeout(function () {
+                    snackbar.remove();
+                }, 250);
+            }, 3000);
+        }, 1);
     }
 
     //储存
