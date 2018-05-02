@@ -3449,83 +3449,96 @@
                     else if (location.href.indexOf('/video/av') !== -1) {
                         {
                             addCss(`
-                                    #title {
-                                      margin-bottom: 16px;
-                                      min-height: 0;
-                                      align-items: baseline;
-                                      display: block;
-                                      cursor: default;
-                                    }
-                                    #type {
-                                      margin-right: 4px;
-                                      font-size: inherit;
-                                    }
-                                    #desc {
-                                      word-break: break-word;
-                                    }
-                                    #count {
-                                      min-height: 0;
-                                      width: auto;
-                                    }
-                                    #data {
-                                      min-height: 0;
-                                      align-items: baseline;
-                                    }
-                                    #data>#create {
-                                      margin-left: 8px;
-                                    }
-                                    .video-data {
-                                      font-size: 0.785em;
-                                      border-radius: 4px;
-                                      height: 24px;
-                                      display: flex;
-                                      padding: 0px 8px;
-                                      margin-left: 4px;
-                                      margin-right: 4px;
-                                      background-color: rgba(140, 140, 140, 0.87);
-                                      color: #fff;
-                                    }
-                                    .tags {
-                                      flex-wrap: wrap;
-                                      min-height: 0;
-                                    }
-                                    .tags>.tag {
-                                      border-radius: 12px;
-                                      border: solid 1px rgba(0,0,0,0.54);
-                                      transition: 125ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-                                      line-height: 18px;
-                                      height: 20px;
-                                      margin-right: 8px;
-                                      margin-bottom: 2px;
-                                      margin-top: 2px;
-                                      padding: 0 12px;
-                                      white-space: nowrap;
-                                      -webkit-user-select: none;
-                                      -moz-user-select: none;
-                                      -ms-user-select: none;
-                                      user-select: none;
-                                      color: rgba(0,0,0,0.87);
-                                      font-size: 0.785rem;
-                                    }
-                                    .tag:first-child {
-                                      margin-left: 0;
-                                    }
-                                    .tags>.tag:hover {
-                                      border-color: rgba(0, 145, 248, 0.87);
-                                    }
-                                    @media(max-width: 800px) {
-                                      #data {
-                                        flex-direction: column;
-                                      }
-                                      #count {
-                                        justify-content: flex-end;
-                                        margin-top: 4px;
-                                      }
-                                    }
-                                    .action.btn#favorite.active {
-                                      color: rgb(243, 156, 18);
-                                    }
-                                    `, 'Video');
+                            #title {
+                              margin-bottom: 16px;
+                              min-height: 0;
+                              align-items: baseline;
+                              display: block;
+                              cursor: default;
+                            }
+                            #type {
+                              margin-right: 4px;
+                              font-size: inherit;
+                            }
+                            #desc {
+                              word-break: break-word;
+                            }
+                            #count {
+                              min-height: 0;
+                              width: auto;
+                            }
+                            #data {
+                              min-height: 0;
+                              align-items: baseline;
+                            }
+                            #data>#create {
+                              margin-left: 8px;
+                            }
+                            .video-data {
+                              font-size: 0.785em;
+                              border-radius: 4px;
+                              height: 24px;
+                              display: flex;
+                              padding: 0px 8px;
+                              margin-left: 4px;
+                              margin-right: 4px;
+                              background-color: rgba(140, 140, 140, 0.87);
+                              color: #fff;
+                            }
+                            .tags {
+                              flex-wrap: wrap;
+                              min-height: 0;
+                            }
+                            .tags>.tag {
+                              border-radius: 12px;
+                              border: solid 1px rgba(0,0,0,0.12);
+                              transition: 125ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+                              line-height: 18px;
+                              height: 20px;
+                              margin-right: 8px;
+                              margin-bottom: 2px;
+                              margin-top: 2px;
+                              padding: 0 12px;
+                              white-space: nowrap;
+                              -webkit-user-select: none;
+                              -moz-user-select: none;
+                              -ms-user-select: none;
+                              user-select: none;
+                              color: rgba(0,0,0,0.54);
+                              font-size: 0.785rem;
+                            }
+                            .tag:first-child {
+                              margin-left: 0;
+                            }
+                            .tags>.tag:hover {
+                              border-color: rgba(0, 145, 248, 0.87);
+                            }
+                            @media(max-width: 800px) {
+                              .video-data {
+                                margin-left: 2px;
+                                margin-right: 2px;
+                              }
+                              #data {
+                                flex-direction: column;
+                              }
+                              #data>#create {
+                                margin-left: 0;
+                              }
+                              #count {
+                                justify-content: flex-end;
+                                width: 100%;
+                                margin-top: 4px;
+                              }
+                            }
+                            @media(max-width: 500px) {
+                              #count {
+                                justify-content: space-around;
+                              }
+                            }
+                            .action.btn#favorite.active {
+                              color: rgb(243, 156, 18);
+                            }
+                            `, 'Video');
                         }
                         let video_data;
 
@@ -3658,28 +3671,28 @@
                                 {
                                     {
                                         addCss(`
-                                                #player {
-                                                  width: 100%;
-                                                  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-                                                }
-                                                #player>iframe {
-                                                  width: 100%;
-                                                  height: 100%;
-                                                }
-                                                 body.web-full {
-                                                   overflow: hidden;
-                                                 }
-                                                 body.web-full>.main>.content {
-                                                   z-index: 1400;
-                                                 }
-                                                 body.web-full #player {
-                                                   height: 100vh !important;
-                                                   width: 100vw;
-                                                   position: fixed;
-                                                   top: 0;
-                                                   left: 0;
-                                                   z-index: 1400;
-                                                 }`, 'Video');
+                                        #player {
+                                          width: 100%;
+                                          transition: 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+                                        }
+                                        #player>iframe {
+                                          width: 100%;
+                                          height: 100%;
+                                        }
+                                        body.web-full {
+                                          overflow: hidden;
+                                        }
+                                        body.web-full>.main>.content {
+                                          z-index: 1400;
+                                        }
+                                        body.web-full #player {
+                                          height: 100vh !important;
+                                          width: 100vw;
+                                          position: fixed;
+                                          top: 0;
+                                          left: 0;
+                                          z-index: 1600;
+                                        }`, 'Video');
                                     }
                                     video.addClass('card');
                                     video.attr('id', 'video');
@@ -3744,16 +3757,14 @@
                                                         }, 175);
                                                     });
                                                 });
-                                                body.on('click', '.ABP-FullScreen', function () {
-                                                    let full = frame.contents().find('.ABP-FullScreen');
+                                                frame.contents().on('click', '.ABP-Web-FullScreen', function () {
                                                     body.addClass('web-full');
-                                                    full.addClass('icon-screen-normal');
-                                                    full.removeClass('icon-screen-full');
-                                                });
-                                                body.on('click', '.icon-screen-normal', function () {
-                                                    body.removeClass('web-full');
-                                                    $(this).addClass('icon-screen-full');
-                                                    $(this).removeClass('icon-screen-normal');
+                                                    frame.contents().find('.ABP-FullScreen.icon-screen-normal').one('click',function () {
+                                                        body.removeClass('web-full');
+                                                        setTimeout(function () {
+                                                            player_frame.height(player_frame.width() * (9 / 16) + 56);
+                                                        }, 150);
+                                                    });
                                                 });
                                             });
                                         }
@@ -3773,13 +3784,13 @@
                                     addCss(`
                                     .pages {
                                       overflow: visible;
+                                      flex-wrap: wrap;
                                     }
                                     .page {
-                                      margin-right: 16px;
-                                      width: 25%;
-                                    }
-                                    .page:last-child {
-                                      margin-right: 0;
+                                      margin-right: 8px;
+                                      margin-left: 8px;
+                                      margin-bottom: 16px;
+                                      width: 48.12%;
                                     }
                                     .page .container {
                                       width: auto;
@@ -3803,12 +3814,11 @@
                                     .page.active {
                                       color: #0091F8;
                                     }
-                                    @media(max-width: 600px) {
-                                      .pages {
-                                        flex-wrap: wrap;
-                                      }
+                                    @media(max-width: 880px) {
                                       .page {
                                         margin-right: 0;
+                                        margin-left: 0;
+                                        width: 100%;
                                       }
                                     }
                                     `, 'Pages');
@@ -3904,11 +3914,6 @@
                                     });
 
                                     content.append(pages);
-
-                                    pages.children('.page').each(function () {
-                                        if (pages.children('.page').length <= 4)
-                                            $(this).css('width', 100 / pages.children('.page').length + '%');
-                                    });
                                 }
                                 let desc_card = $('<div\>');
                                 //简介
@@ -4231,12 +4236,12 @@
             }
             .ABP-Unit .ABP-Control {
               border: none;
-              border-bottom: 1px solid rgba(0,0,0,0.12);
-              height: 27px;
+              box-shadow: 0 1px rgba(0,0,0,0.12);
+              height: 28px;
               bottom: 28px;
             }
             .ABP-Unit .ABP-Text {
-              height: 27px;
+              height: 28px;
               border: none;
             }
             .ABP-Unit .ABP-Control .progress-bar {
@@ -4267,27 +4272,15 @@
               content: "";
               cursor: pointer;
             }
-            .ABP-Unit .ABP-FullScreenGroup:hover .Web-FullScreen {
-              opacity: 1;
-              pointer-events: auto;
-            }
-            .ABP-Unit .ABP-FullScreenGroup .Web-FullScreen {
-              position: absolute;
-              top: -22px;
-              height: 20px;
-              outline: #ececec solid 1px;
-              outline-bottom: none;
-              background: #fff;
-              opacity: 0;
-              margin-bottom: 1px;
-              pointer-events: none;
-            }
             .ABP-Unit .ABP-Text input.ABP-Comment-Input {
-              height: 22px;
+              height: 20px;
+              padding: 4px;
+              width: calc(100% - 146px);
             }
             .ABP-Unit .ABP-Text .ABP-Comment-Send {
-              height: 26px;
-              line-height: 26px;
+              height: 28px;
+              line-height: 28px;
+              border: none;
             }
             .ABP-FullScreen .ABP-Settings, .ABP-Mini .ABP-Settings, .ABP-WideScreen .ABP-Settings {
               bottom: 56px;
