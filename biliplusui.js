@@ -2095,11 +2095,10 @@
                     //关于
                     else if (location.href.indexOf('/?about') !== -1) {
                         addCss(`
-                                  .content a {
-                                    color: #0091F8;
-                                    vertical-align: inherit;
-                                  }
-                                }`, 'About');
+                        .content a {
+                          color: #0091F8;
+                          vertical-align: inherit;
+                        }`, 'About');
                         nav_title.text('关于 - BiliPlus');
                         content.append($('#content'));
                         $('#content').removeClass("content");
@@ -2474,6 +2473,27 @@
                             }
                             content.append(comment_container);
                         }
+                        let img_container = $('<div\>');
+
+                        img_container.addClass('container');
+                        img_container.addClass('center');
+                        img_container.addClass('img');
+
+                        main.append(img_container);
+
+                        img_container.hide();
+                        $('.comment img').click(function (e) {
+                            e.stopPropagation();
+                            img_container.children().remove();
+                            img_container.append($(this).prop('outerHTML'));
+                            img_container.children().removeAttr('style');
+                            img_container.show();
+                            img_container.one('click', function () {
+                                img_container.hide();
+                                $('table.white_container').parent('.container').remove();
+                                body.removeAttr('style');
+                            });
+                        });
                     }
                     //搜索
                     else if (location.href.indexOf('/api/do.php?act=search') !== -1) {
@@ -3759,7 +3779,7 @@
                                                 });
                                                 frame.contents().on('click', '.ABP-Web-FullScreen', function () {
                                                     body.addClass('web-full');
-                                                    frame.contents().find('.ABP-FullScreen.icon-screen-normal').one('click',function () {
+                                                    frame.contents().find('.ABP-FullScreen.icon-screen-normal').one('click', function () {
                                                         body.removeClass('web-full');
                                                         setTimeout(function () {
                                                             player_frame.height(player_frame.width() * (9 / 16) + 56);
@@ -3789,7 +3809,6 @@
                                     .page {
                                       margin-right: 8px;
                                       margin-left: 8px;
-                                      margin-bottom: 16px;
                                       width: 48.12%;
                                     }
                                     .page .container {
@@ -3912,6 +3931,10 @@
                                             page_clone.addClass('active');
                                         }
                                     });
+
+                                    if (pages.children('.page').length === 1) {
+                                        pages.children('.page').width('100%');
+                                    }
 
                                     content.append(pages);
                                 }
