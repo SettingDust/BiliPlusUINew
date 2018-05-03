@@ -3466,7 +3466,8 @@
 
                     }
                     //视频
-                    else if (location.href.indexOf('/video/av') !== -1) {
+                    else if (location.href.indexOf('/video/av') !== -1
+                    && location.href.indexOf('/all') === -1) {
                         {
                             addCss(`
                             #title {
@@ -3747,21 +3748,28 @@
                                         //播放器
                                         {
                                             let frame = $('<iframe\>');
-                                            if (page_data.type === 'bangumi')
-                                                frame.attr('src', '/api/h5play-vupload.php?iframe' +
-                                                    '&tid=' + video_data.tid +
-                                                    '&cid=' + page_data.cid +
-                                                    '&type=' + 'vupload' +
-                                                    '&vid=' + page_data.vid +
-                                                    '&bangumi=' + '1'
-                                                );
-                                            else
-                                                frame.attr('src', '/api/h5play-vupload.php?iframe' +
-                                                    '&tid=' + video_data.tid +
-                                                    '&cid=' + page_data.cid +
-                                                    '&type=' + page_data.type +
-                                                    '&vid=' + page_data.vid
-                                                );
+                                            let data = {
+                                                'cid': page_data.cid,
+                                                'vid': page_data.vid,
+                                                'type': page_data.type,
+                                                'tid': video_data.tid,
+                                                'bangumi': 0
+                                            };
+                                            if (data.type === 'bangumi') {
+                                                data.bangumi = 1;
+                                                data.type = 'vupload';
+                                            }
+                                            if (data.vid === '') {
+                                                data.vid = data.type + data.cid;
+                                            }
+
+                                            frame.attr('src', '/api/h5play-vupload.php?iframe' +
+                                                '&tid=' + data.tid +
+                                                '&cid=' + data.cid +
+                                                '&type=' + data.type +
+                                                '&vid=' + data.vid +
+                                                '&bangumi=' + data.bangumi
+                                            );
                                             player_frame.attr('id', 'player');
                                             frame.attr('frameborder', 'no');
                                             player_frame.append(frame);
