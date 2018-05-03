@@ -2883,10 +2883,10 @@
                     }
                     //番剧
                     else if (location.href.indexOf('/bangumi/i/') !== -1) {
+
+                        //信息
                         {
-                            //信息
-                            {
-                                addCss(`
+                            addCss(`
                                         #cover {
                                           width: 225px;
                                           height: 300px;
@@ -2976,10 +2976,10 @@
                                           }
                                         }
                                         `, 'Bangumi');
-                            }
-                            //季
-                            {
-                                addCss(`
+                        }
+                        //季
+                        {
+                            addCss(`
                                         #seasons {
                                           min-height: 48px;
                                           height: 36px;
@@ -3037,166 +3037,166 @@
                                           box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
                                         }
                                         */`, 'Season');
-                            }
-                            let seasons = $('<div\>');
-                            seasons.addClass('container');
-                            seasons.addClass('card');
-                            seasons.attr('id', 'seasons');
+                        }
+                        let seasons = $('<div\>');
+                        seasons.addClass('container');
+                        seasons.addClass('card');
+                        seasons.attr('id', 'seasons');
 
-                            let bangumi_id = location.href.match(/\d+/) + '';
-                            let bangumi_data;
-                            NProgress.start();
-                            addSnackBar('加载中...');
-                            let refreshInfo = function (data) {
-                                seasons.children().remove();
-                                content.children().remove();
-                                if (data.code === 0 && data.result) {
-                                    bangumi_data = data.result;
-                                    nav_title.text(bangumi_data.title);
-                                    if (bangumi_data.seasons.length > 1) {
-                                        //分季
-                                        {
-                                            let season = $('<div\>');
-                                            let season_text = $('<a\>');
-                                            season.addClass('season');
-                                            season.addClass('btn');
-                                            season_text.addClass('ellipsis');
-                                            season_text.addClass('text');
-                                            season.append(season_text);
-                                            let f = true;
-                                            bangumi_data.seasons.forEach(function (e) {
-                                                let season_clone = season.clone();
-                                                season_clone.children().text(e.title);
-                                                season_clone.children().attr('href', '/bangumi/i/' + e.season_id);
-                                                if (f) season_clone.addClass('active');
-                                                if (e.season_id === bangumi_id) {
-                                                    season_clone.addClass('focus');
-                                                    f = false;
-                                                }
-                                                seasons.append(season_clone);
-                                                season_clone.click(function () {
-                                                    location.href = season_clone.children().attr('href');
-                                                });
-                                            });
-                                            content.append(seasons);
-                                        }
-                                    }
-                                    //番剧信息
+                        let bangumi_id = location.href.match(/\d+/) + '';
+                        let bangumi_data;
+                        NProgress.start();
+                        addSnackBar('加载中...');
+                        let refreshInfo = function (data) {
+                            seasons.children().remove();
+                            content.children().remove();
+                            if (data.code === 0 && data.result) {
+                                bangumi_data = data.result;
+                                nav_title.text(bangumi_data.title);
+                                if (bangumi_data.seasons.length > 1) {
+                                    //分季
                                     {
-                                        let bangumi_info = $('<div\>');
-                                        let bangumi_info_content = $('<div\>');
-                                        let bangumi_cover = $('<img\>');
-                                        let bangumi_text = $('<div\>');
+                                        let season = $('<div\>');
+                                        let season_text = $('<a\>');
+                                        season.addClass('season');
+                                        season.addClass('btn');
+                                        season_text.addClass('ellipsis');
+                                        season_text.addClass('text');
+                                        season.append(season_text);
+                                        let f = true;
+                                        bangumi_data.seasons.forEach(function (e) {
+                                            let season_clone = season.clone();
+                                            season_clone.children().text(e.title);
+                                            season_clone.children().attr('href', '/bangumi/i/' + e.season_id);
+                                            if (f) season_clone.addClass('active');
+                                            if (e.season_id === bangumi_id) {
+                                                season_clone.addClass('focus');
+                                                f = false;
+                                            }
+                                            seasons.append(season_clone);
+                                            season_clone.click(function () {
+                                                location.href = season_clone.children().attr('href');
+                                            });
+                                        });
+                                        content.append(seasons);
+                                    }
+                                }
+                                //番剧信息
+                                {
+                                    let bangumi_info = $('<div\>');
+                                    let bangumi_info_content = $('<div\>');
+                                    let bangumi_cover = $('<img\>');
+                                    let bangumi_text = $('<div\>');
 
-                                        let action = $('<div\>');
+                                    let action = $('<div\>');
 
-                                        bangumi_info.addClass('card');
-                                        bangumi_info_content.addClass('container');
-                                        bangumi_info_content.addClass('column');
-                                        bangumi_text.addClass('padding');
-                                        bangumi_text.addClass('mid');
+                                    bangumi_info.addClass('card');
+                                    bangumi_info_content.addClass('container');
+                                    bangumi_info_content.addClass('column');
+                                    bangumi_text.addClass('padding');
+                                    bangumi_text.addClass('mid');
 
-                                        bangumi_cover.attr('id', 'cover');
-                                        bangumi_text.attr('id', 'text');
-                                        bangumi_info.attr('id', 'info');
+                                    bangumi_cover.attr('id', 'cover');
+                                    bangumi_text.attr('id', 'text');
+                                    bangumi_info.attr('id', 'info');
 
-                                        //文本
+                                    //文本
+                                    {
+                                        //标题
                                         {
-                                            //标题
-                                            {
-                                                let bangumi_title = $('<div\>');
-                                                let bangumi_title_cn = $('<h2\>');
-                                                let bangumi_title_raw = $('<b\>');
-                                                let bangumi_alias = $('<em\>');
-                                                bangumi_alias.addClass('description');
-                                                bangumi_alias.addClass('ellipsis');
-                                                bangumi_title.addClass('container');
-                                                bangumi_title_cn.addClass('ellipsis');
-                                                bangumi_title_raw.addClass('description');
-                                                bangumi_title_raw.addClass('ellipsis');
-                                                bangumi_title.attr('id', 'title');
+                                            let bangumi_title = $('<div\>');
+                                            let bangumi_title_cn = $('<h2\>');
+                                            let bangumi_title_raw = $('<b\>');
+                                            let bangumi_alias = $('<em\>');
+                                            bangumi_alias.addClass('description');
+                                            bangumi_alias.addClass('ellipsis');
+                                            bangumi_title.addClass('container');
+                                            bangumi_title_cn.addClass('ellipsis');
+                                            bangumi_title_raw.addClass('description');
+                                            bangumi_title_raw.addClass('ellipsis');
+                                            bangumi_title.attr('id', 'title');
 
-                                                bangumi_title_cn.text((bangumi_data.is_finish === '1' ? '【完结】' : '')
-                                                    + bangumi_data.title);
-                                                if (bangumi_data.is_finish === '1')
-                                                    bangumi_title_cn.css('margin-left', '-12px');
-                                                bangumi_title_raw.text(bangumi_data.jp_title);
-                                                bangumi_alias.text(bangumi_data.alias);
-                                                bangumi_title.append(bangumi_title_cn);
-                                                bangumi_title.append(bangumi_title_raw);
-                                                bangumi_text.append(bangumi_title);
-                                                bangumi_text.append(bangumi_alias);
-                                            }
-
-                                            //数据
-                                            let bangumi_count_container = $('<div\>');
-                                            bangumi_count_container.addClass('container');
-                                            bangumi_count_container.attr('id', 'count');
-                                            {
-                                                let bangumi_count = $('<div\>');
-                                                let bangumi_count_type = $('<b\>');
-                                                let bangumi_count_num = $('<span\>');
-                                                bangumi_count.append(bangumi_count_type);
-                                                bangumi_count_type.attr('id', 'type');
-                                                bangumi_count.addClass('center');
-                                                bangumi_count.append(bangumi_count_num);
-                                                bangumi_count.addClass('bangumi-data');
-                                                {
-                                                    let bangumi_count_play = bangumi_count.clone();
-                                                    bangumi_count_play.children('b').text('播放量');
-                                                    bangumi_count_play.children('span').text(
-                                                        bangumi_data.play_count > 1e4 - 1
-                                                            ? bangumi_data.play_count > 1e8 - 1
-                                                            ? Math.floor(bangumi_data.play_count / 1e8 * 10) / 10 + '亿'
-                                                            : Math.floor(bangumi_data.play_count / 1e4 * 10) / 10 + '万'
-                                                            : bangumi_data.play_count);
-                                                    bangumi_count_container.append(bangumi_count_play);
-
-                                                    let bangumi_count_fav = bangumi_count.clone();
-                                                    bangumi_count_fav.children('b').text('追番数');
-                                                    bangumi_count_fav.children('span').text(
-                                                        bangumi_data.favorites > 1e4 - 1
-                                                            ? bangumi_data.favorites > 1e8 - 1
-                                                            ? Math.floor(bangumi_data.favorites / 1e8 * 10) / 10 + '亿'
-                                                            : Math.floor(bangumi_data.favorites / 1e4 * 10) / 10 + '万'
-                                                            : bangumi_data.favorites);
-                                                    bangumi_count_container.append(bangumi_count_fav);
-
-                                                    let bangumi_count_danmaku = bangumi_count.clone();
-                                                    bangumi_count_danmaku.children('b').text('弹幕数');
-                                                    bangumi_count_danmaku.children('span').text(
-                                                        bangumi_data.danmaku_count > 1e4 - 1
-                                                            ? bangumi_data.danmaku_count > 1e8 - 1
-                                                            ? Math.floor(bangumi_data.danmaku_count / 1e8 * 10) / 10 + '亿'
-                                                            : Math.floor(bangumi_data.danmaku_count / 1e4 * 10) / 10 + '万'
-                                                            : bangumi_data.danmaku_count);
-                                                    bangumi_count_container.append(bangumi_count_danmaku);
-                                                }
-                                            }
-
-                                            //介绍
-                                            let bangumi_desc = $('<div\>');
-                                            bangumi_desc.attr('id', 'desc');
-                                            {
-                                                let bangumi_desc_text = $('<span\>');
-                                                bangumi_desc_text.text(bangumi_data.evaluate);
-                                                bangumi_desc.append(bangumi_desc_text);
-                                            }
-
-                                            bangumi_text.append(bangumi_count_container);
-                                            bangumi_text.append(bangumi_desc);
+                                            bangumi_title_cn.text((bangumi_data.is_finish === '1' ? '【完结】' : '')
+                                                + bangumi_data.title);
+                                            if (bangumi_data.is_finish === '1')
+                                                bangumi_title_cn.css('margin-left', '-12px');
+                                            bangumi_title_raw.text(bangumi_data.jp_title);
+                                            bangumi_alias.text(bangumi_data.alias);
+                                            bangumi_title.append(bangumi_title_cn);
+                                            bangumi_title.append(bangumi_title_raw);
+                                            bangumi_text.append(bangumi_title);
+                                            bangumi_text.append(bangumi_alias);
                                         }
-                                        //底部
-                                        {
-                                            let action_space = $('<div\>');
-                                            action.addClass('container');
-                                            action.addClass('center');
-                                            action.attr('id', 'action');
-                                            action_space.addClass('flex-whitespace');
 
-                                            //标签
+                                        //数据
+                                        let bangumi_count_container = $('<div\>');
+                                        bangumi_count_container.addClass('container');
+                                        bangumi_count_container.attr('id', 'count');
+                                        {
+                                            let bangumi_count = $('<div\>');
+                                            let bangumi_count_type = $('<b\>');
+                                            let bangumi_count_num = $('<span\>');
+                                            bangumi_count.append(bangumi_count_type);
+                                            bangumi_count_type.attr('id', 'type');
+                                            bangumi_count.addClass('center');
+                                            bangumi_count.append(bangumi_count_num);
+                                            bangumi_count.addClass('bangumi-data');
                                             {
-                                                addCss(`
+                                                let bangumi_count_play = bangumi_count.clone();
+                                                bangumi_count_play.children('b').text('播放量');
+                                                bangumi_count_play.children('span').text(
+                                                    bangumi_data.play_count > 1e4 - 1
+                                                        ? bangumi_data.play_count > 1e8 - 1
+                                                        ? Math.floor(bangumi_data.play_count / 1e8 * 10) / 10 + '亿'
+                                                        : Math.floor(bangumi_data.play_count / 1e4 * 10) / 10 + '万'
+                                                        : bangumi_data.play_count);
+                                                bangumi_count_container.append(bangumi_count_play);
+
+                                                let bangumi_count_fav = bangumi_count.clone();
+                                                bangumi_count_fav.children('b').text('追番数');
+                                                bangumi_count_fav.children('span').text(
+                                                    bangumi_data.favorites > 1e4 - 1
+                                                        ? bangumi_data.favorites > 1e8 - 1
+                                                        ? Math.floor(bangumi_data.favorites / 1e8 * 10) / 10 + '亿'
+                                                        : Math.floor(bangumi_data.favorites / 1e4 * 10) / 10 + '万'
+                                                        : bangumi_data.favorites);
+                                                bangumi_count_container.append(bangumi_count_fav);
+
+                                                let bangumi_count_danmaku = bangumi_count.clone();
+                                                bangumi_count_danmaku.children('b').text('弹幕数');
+                                                bangumi_count_danmaku.children('span').text(
+                                                    bangumi_data.danmaku_count > 1e4 - 1
+                                                        ? bangumi_data.danmaku_count > 1e8 - 1
+                                                        ? Math.floor(bangumi_data.danmaku_count / 1e8 * 10) / 10 + '亿'
+                                                        : Math.floor(bangumi_data.danmaku_count / 1e4 * 10) / 10 + '万'
+                                                        : bangumi_data.danmaku_count);
+                                                bangumi_count_container.append(bangumi_count_danmaku);
+                                            }
+                                        }
+
+                                        //介绍
+                                        let bangumi_desc = $('<div\>');
+                                        bangumi_desc.attr('id', 'desc');
+                                        {
+                                            let bangumi_desc_text = $('<span\>');
+                                            bangumi_desc_text.text(bangumi_data.evaluate);
+                                            bangumi_desc.append(bangumi_desc_text);
+                                        }
+
+                                        bangumi_text.append(bangumi_count_container);
+                                        bangumi_text.append(bangumi_desc);
+                                    }
+                                    //底部
+                                    {
+                                        let action_space = $('<div\>');
+                                        action.addClass('container');
+                                        action.addClass('center');
+                                        action.attr('id', 'action');
+                                        action_space.addClass('flex-whitespace');
+
+                                        //标签
+                                        {
+                                            addCss(`
                                                         .tag {
                                                           border-radius: 14px;
                                                           background-color: rgba(0, 145, 248, 0.87);
@@ -3220,250 +3220,250 @@
                                                           line-height: 28px;
                                                           vertical-align: middle;
                                                         }`, 'Tag');
-                                                let tag = $('<div\>');
-                                                let tag_text = $('<span\>');
-                                                tag.addClass('tag');
-                                                tag_text.addClass('text');
-                                                tag.append(tag_text);
+                                            let tag = $('<div\>');
+                                            let tag_text = $('<span\>');
+                                            tag.addClass('tag');
+                                            tag_text.addClass('text');
+                                            tag.append(tag_text);
 
-                                                bangumi_data.tags.forEach(function (e) {
-                                                    let tag_clone = tag.clone();
-                                                    tag_clone.children().text(e.tag_name);
-                                                    action.append(tag_clone);
-                                                });
-                                            }
-                                            action.append(action_space);
+                                            bangumi_data.tags.forEach(function (e) {
+                                                let tag_clone = tag.clone();
+                                                tag_clone.children().text(e.tag_name);
+                                                action.append(tag_clone);
+                                            });
+                                        }
+                                        action.append(action_space);
 
-                                            //动作
-                                            {
-                                                let fav = icon.clone();
-                                                fav.addClass('mid');
-                                                fav.attr('id', 'favorite');
-                                                fav.addClass('btn');
-                                                if (!loginInfo.isLogin) fav.addClass('disable');
-                                                action.append(fav);
+                                        //动作
+                                        {
+                                            let fav = icon.clone();
+                                            fav.addClass('mid');
+                                            fav.attr('id', 'favorite');
+                                            fav.addClass('btn');
+                                            if (!loginInfo.isLogin) fav.addClass('disable');
+                                            action.append(fav);
+                                            $.getJSON('/me/bangumi/action/check/sid/' + bangumi_data.season_id, function (e) {
+                                                if (e.code === 0) {
+                                                    if (e.result.attention === '0')
+                                                        fav.children().text('favorite_border');
+                                                    else if (e.result.attention === '1') {
+                                                        fav.children().text('favorite');
+                                                    }
+                                                    console.log(fav.children());
+                                                } else {
+                                                    addSnackBar(e.message + '[' + e.code + ']');
+                                                }
+                                            });
+                                            fav.click(function () {
                                                 $.getJSON('/me/bangumi/action/check/sid/' + bangumi_data.season_id, function (e) {
                                                     if (e.code === 0) {
-                                                        if (e.result.attention === '0')
-                                                            fav.children().text('favorite_border');
-                                                        else if (e.result.attention === '1') {
-                                                            fav.children().text('favorite');
+                                                        if (e.result.attention === '0') {
+                                                            $.getJSON('/me/bangumi/action/add/sid/' + bangumi_data.season_id, function (e) {
+                                                                if (e.code === 0) {
+                                                                    fav.children().text('favorite');
+                                                                    addSnackBar('追番成功');
+                                                                } else {
+                                                                    addSnackBar(e.message + '[' + e.code + ']');
+                                                                }
+                                                            });
+                                                        } else {
+                                                            $.getJSON('/me/bangumi/action/del/sid/' + bangumi_data.season_id, function (e) {
+                                                                if (e.code === 0) {
+                                                                    fav.children().text('favorite_border');
+                                                                    addSnackBar('弃番达成');
+                                                                } else {
+                                                                    addSnackBar(e.message + '[' + e.code + ']');
+                                                                }
+                                                            });
                                                         }
-                                                        console.log(fav.children());
                                                     } else {
                                                         addSnackBar(e.message + '[' + e.code + ']');
                                                     }
                                                 });
-                                                fav.click(function () {
-                                                    $.getJSON('/me/bangumi/action/check/sid/' + bangumi_data.season_id, function (e) {
-                                                        if (e.code === 0) {
-                                                            if (e.result.attention === '0') {
-                                                                $.getJSON('/me/bangumi/action/add/sid/' + bangumi_data.season_id, function (e) {
-                                                                    if (e.code === 0) {
-                                                                        fav.children().text('favorite');
-                                                                        addSnackBar('追番成功');
-                                                                    } else {
-                                                                        addSnackBar(e.message + '[' + e.code + ']');
-                                                                    }
-                                                                });
-                                                            } else {
-                                                                $.getJSON('/me/bangumi/action/del/sid/' + bangumi_data.season_id, function (e) {
-                                                                    if (e.code === 0) {
-                                                                        fav.children().text('favorite_border');
-                                                                        addSnackBar('弃番达成');
-                                                                    } else {
-                                                                        addSnackBar(e.message + '[' + e.code + ']');
-                                                                    }
-                                                                });
-                                                            }
-                                                        } else {
-                                                            addSnackBar(e.message + '[' + e.code + ']');
-                                                        }
-                                                    });
-                                                });
-                                            }
-
+                                            });
                                         }
 
-                                        bangumi_info_content.append(bangumi_text);
-                                        bangumi_info_content.append(action);
-                                        bangumi_info.append(bangumi_cover);
-                                        bangumi_info.append(bangumi_info_content);
-                                        content.append(bangumi_info);
-                                        $('<img/>').attr('src', bangumi_data.cover.replace(/https?:/, 'https:')).load(function () {
-                                            $(this).remove(); // prevent memory leaks as @benweet suggested
-                                            bangumi_cover.attr('src', bangumi_data.cover.replace(/https?:/, 'https:'));
-                                            NProgress.done();
-                                        });
                                     }
-                                    //番剧集数
+
+                                    bangumi_info_content.append(bangumi_text);
+                                    bangumi_info_content.append(action);
+                                    bangumi_info.append(bangumi_cover);
+                                    bangumi_info.append(bangumi_info_content);
+                                    content.append(bangumi_info);
+                                    $('<img/>').attr('src', bangumi_data.cover.replace(/https?:/, 'https:')).load(function () {
+                                        $(this).remove(); // prevent memory leaks as @benweet suggested
+                                        bangumi_cover.attr('src', bangumi_data.cover.replace(/https?:/, 'https:'));
+                                        NProgress.done();
+                                    });
+                                }
+                                //番剧集数
+                                {
+                                    addCss(`
+                                    .videos.container {
+                                      flex-wrap: wrap;
+                                      margin-bottom: 24px;
+                                    }
+                                    .videos .card {
+                                      margin: 6px;
+                                      width: 272px;
+                                    }
+                                    .videos .card img {
+                                      width: 160px;
+                                      height: auto;
+                                    }
+                                    @media(max-width: 620px) {
+                                      .videos .card {
+                                        margin: 0;
+                                        margin-bottom: 6px;
+                                        margin-top: 6px;
+                                        width: 100%;
+                                      }
+                                    }`, 'Videos');
+                                    let container = $('<div\>');
+                                    container.addClass('container');
+                                    container.addClass('videos');
+                                    //卡片
                                     {
-                                        addCss(`
-                                                .videos.container {
-                                                  flex-wrap: wrap;
-                                                  margin-bottom: 24px;
-                                                }
-                                                .videos .card {
-                                                  margin: 6px;
-                                                  width: 272px;
-                                                }
-                                                .videos .card img {
-                                                  width: 160px;
-                                                  height: auto;
-                                                }
-                                                @media(max-width: 620px) {
-                                                  .videos .card {
-                                                    margin: 0;
-                                                    margin-bottom: 6px;
-                                                    margin-top: 6px;
-                                                    width: 100%;
-                                                  }
-                                                }`, 'Videos');
-                                        let container = $('<div\>');
-                                        container.addClass('container');
-                                        container.addClass('videos');
-                                        //卡片
+                                        let card = $('<div\>');
+                                        let card_content = $('<div\>');
+                                        let card_img = $('<img\>');
+                                        let card_text = $('<div\>');
+                                        let card_title = $('<a\>');
+                                        let card_desc = $('<p\>');
+
+                                        card.addClass('card');
+                                        card_content.addClass('container');
+                                        card_title.addClass('ellipsis');
+                                        card_text.addClass('card-text');
+                                        card_text.addClass('padding');
+                                        card_text.addClass('ellipsis');
+                                        card_desc.addClass('description');
+
+                                        card_text.append(card_title);
+                                        card_text.append(card_desc);
+
+                                        card_content.append(card_img);
+                                        card_content.append(card_text);
+
+                                        card.append(card_content);
                                         {
-                                            let card = $('<div\>');
-                                            let card_content = $('<div\>');
-                                            let card_img = $('<img\>');
-                                            let card_text = $('<div\>');
-                                            let card_title = $('<a\>');
-                                            let card_desc = $('<p\>');
-
-                                            card.addClass('card');
-                                            card_content.addClass('container');
-                                            card_title.addClass('ellipsis');
-                                            card_text.addClass('card-text');
-                                            card_text.addClass('padding');
-                                            card_text.addClass('ellipsis');
-                                            card_desc.addClass('description');
-
-                                            card_text.append(card_title);
-                                            card_text.append(card_desc);
-
-                                            card_content.append(card_img);
-                                            card_content.append(card_text);
-
-                                            card.append(card_content);
-                                            {
-                                                bangumi_data.episodes.forEach(function (e) {
-                                                    let card_clone = card.clone();
-                                                    card_clone.find('a').text(e.index_title);
-                                                    card_clone.find('a').attr('title', e.index_title);
-                                                    card_clone.find('a').attr('href', '/av' + e.av_id);
-                                                    card_clone.find('p').text('第' + e.index + '话')
-                                                    $('<img/>').attr('src', (e.cover + '@w160.jpg').replace(/https?:/, 'https:')).load(function () {
-                                                        $(this).remove(); // prevent memory leaks as @benweet suggested
-                                                        card_clone.find('img').attr('src', (e.cover + '@w160.jpg').replace(/https?:/, 'https:'));
-                                                        card_clone.find('img').addClass('active');
-                                                        card_clone.find('img').addClass('btn');
-                                                        card_clone.find('img').attr('href', '/av' + e.av_id);
-                                                        card_clone.find('img').click(function () {
-                                                            location.href = $(this).attr('href');
-                                                        });
+                                            bangumi_data.episodes.forEach(function (e) {
+                                                let card_clone = card.clone();
+                                                card_clone.find('a').text(e.index_title);
+                                                card_clone.find('a').attr('title', e.index_title);
+                                                card_clone.find('a').attr('href', '/av' + e.av_id);
+                                                card_clone.find('p').text('第' + e.index + '话')
+                                                $('<img/>').attr('src', (e.cover + '@w160.jpg').replace(/https?:/, 'https:')).load(function () {
+                                                    $(this).remove(); // prevent memory leaks as @benweet suggested
+                                                    card_clone.find('img').attr('src', (e.cover + '@w160.jpg').replace(/https?:/, 'https:'));
+                                                    card_clone.find('img').addClass('active');
+                                                    card_clone.find('img').addClass('btn');
+                                                    card_clone.find('img').attr('href', '/av' + e.av_id);
+                                                    card_clone.find('img').click(function () {
+                                                        location.href = $(this).attr('href');
                                                     });
-                                                    container.append(card_clone);
                                                 });
-                                            }
+                                                container.append(card_clone);
+                                            });
                                         }
-                                        content.append(container);
                                     }
-                                    if (bangumi_data.staff !== '' && bangumi_data.cast !== '') {
-                                        //Staff&Cast
+                                    content.append(container);
+                                }
+                                if (bangumi_data.staff !== '' && bangumi_data.cast !== '') {
+                                    //Staff&Cast
+                                    {
                                         {
-                                            {
-                                                addCss(`
+                                            addCss(`
                                                     .card.staff .card-text {
                                                       width: 50%;
                                                     }`, 'Staff');
-                                            }
+                                        }
 
-                                            let card = $('<div\>');
-                                            let card_content = $('<div\>');
-                                            let card_text_staff = $('<div\>');
-                                            let card_text_cast = $('<div\>');
+                                        let card = $('<div\>');
+                                        let card_content = $('<div\>');
+                                        let card_text_staff = $('<div\>');
+                                        let card_text_cast = $('<div\>');
 
-                                            card.addClass('card');
-                                            card.addClass('staff');
-                                            card_content.addClass('container');
-                                            card_text_staff.addClass('padding');
-                                            card_text_staff.addClass('mid');
-                                            card_text_staff.addClass('card-text');
-                                            card_text_cast.addClass('padding');
-                                            card_text_cast.addClass('mid');
-                                            card_text_cast.addClass('card-text');
+                                        card.addClass('card');
+                                        card.addClass('staff');
+                                        card_content.addClass('container');
+                                        card_text_staff.addClass('padding');
+                                        card_text_staff.addClass('mid');
+                                        card_text_staff.addClass('card-text');
+                                        card_text_cast.addClass('padding');
+                                        card_text_cast.addClass('mid');
+                                        card_text_cast.addClass('card-text');
 
-                                            if (bangumi_data.staff !== '') {
-                                                let staff = $('<h3\>');
-                                                staff.text('Staff');
-                                                card_text_staff.append(staff);
-                                                //staff
-                                                {
-                                                    bangumi_data.staff.split('\n').forEach(function (e) {
-                                                        let staff_row = $('<p\>');
-                                                        staff_row.text(e);
-                                                        card_text_staff.append(staff_row);
-                                                    });
-                                                }
-                                            }
-                                            if (bangumi_data.cast !== '') {
-                                                let cast = $('<h3\>');
-                                                cast.text('Cast');
-                                                card_text_cast.append(cast);
-                                                //cast
-                                                {
-                                                    bangumi_data.actor.forEach(function (e) {
-                                                        let cast_row = $('<p\>');
-                                                        cast_row.text(e.role + '：' + e.actor);
-                                                        card_text_cast.append(cast_row);
-                                                    })
-                                                }
+                                        if (bangumi_data.staff !== '') {
+                                            let staff = $('<h3\>');
+                                            staff.text('Staff');
+                                            card_text_staff.append(staff);
+                                            //staff
+                                            {
+                                                bangumi_data.staff.split('\n').forEach(function (e) {
+                                                    let staff_row = $('<p\>');
+                                                    staff_row.text(e);
+                                                    card_text_staff.append(staff_row);
+                                                });
                                             }
                                             card_content.append(card_text_staff);
-                                            card_content.append(card_text_cast);
-                                            card.append(card_content);
-                                            content.append(card);
                                         }
-                                    }
-                                    //回到顶部
-                                    {
-                                        let buttom = $('<div\>');
-                                        let buttom_button = $('<button\>');
-                                        let buttom_text = $('<span\>');
-                                        let buttom_top = buttom_button.clone();
-                                        {
-                                            buttom.addClass('container');
-                                            buttom.addClass('action');
-                                            buttom_button.addClass('action');
-                                            buttom_button.addClass('btn');
-                                            buttom_text.addClass('material-icons');
-                                            buttom_top = buttom_button.clone();
-
-                                            buttom_top.append(buttom_text.clone().text('arrow_upward'));
-                                            buttom_top.hide();
-                                            buttom.append(buttom_top);
-                                        }
-
-                                        $(window).scroll(function () {
-                                            if ($(window).scrollTop() >= 120) {
-                                                buttom_top.show();
-                                            } else {
-                                                buttom_top.fadeOut(350);
+                                        if (bangumi_data.cast !== '') {
+                                            let cast = $('<h3\>');
+                                            cast.text('Cast');
+                                            card_text_cast.append(cast);
+                                            //cast
+                                            {
+                                                bangumi_data.actor.forEach(function (e) {
+                                                    let cast_row = $('<p\>');
+                                                    cast_row.text(e.role + '：' + e.actor);
+                                                    card_text_cast.append(cast_row);
+                                                })
                                             }
-                                        });
-                                        buttom_top.click(function () {
-                                            $('html, body').animate({scrollTop: '0'}, 500);
-                                        });
-                                        content.append(buttom);
+                                            card_content.append(card_text_cast);
+                                        }
+                                        card.append(card_content);
+                                        content.append(card);
                                     }
-                                    addSnackBar('加载成功');
-                                } else {
-                                    addSnackBar(data.message + '[' + data.code + ']');
                                 }
-                            };
-                            getjson('/api/bangumi?season=' + bangumi_id, refreshInfo);
-                        }
+                                //回到顶部
+                                {
+                                    let buttom = $('<div\>');
+                                    let buttom_button = $('<button\>');
+                                    let buttom_text = $('<span\>');
+                                    let buttom_top = buttom_button.clone();
+                                    {
+                                        buttom.addClass('container');
+                                        buttom.addClass('action');
+                                        buttom_button.addClass('action');
+                                        buttom_button.addClass('btn');
+                                        buttom_text.addClass('material-icons');
+                                        buttom_top = buttom_button.clone();
+
+                                        buttom_top.append(buttom_text.clone().text('arrow_upward'));
+                                        buttom_top.hide();
+                                        buttom.append(buttom_top);
+                                    }
+
+                                    $(window).scroll(function () {
+                                        if ($(window).scrollTop() >= 120) {
+                                            buttom_top.show();
+                                        } else {
+                                            buttom_top.fadeOut(350);
+                                        }
+                                    });
+                                    buttom_top.click(function () {
+                                        $('html, body').animate({scrollTop: '0'}, 500);
+                                    });
+                                    content.append(buttom);
+                                }
+                                addSnackBar('加载成功');
+                            } else {
+                                addSnackBar(data.message + '[' + data.code + ']');
+                            }
+                        };
+                        getjson('/api/bangumi?season=' + bangumi_id, refreshInfo);
+
                     }
                     //视频
                     else if (location.href.indexOf('/video/av') !== -1) {
