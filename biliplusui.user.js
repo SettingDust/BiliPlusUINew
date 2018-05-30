@@ -70,7 +70,7 @@
         let avatar = loginInfo.face;
         let name = loginInfo.uname;
         let mid = loginInfo.mid;
-        let css = head.children('link[href="/style/biliplus.min.css?180127"]');
+        let css = head.children('link[href^="/style/biliplus"]');
         css.remove();
 
         head.append('<link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/Ripple.js/1.2.1/ripple.min.css">');
