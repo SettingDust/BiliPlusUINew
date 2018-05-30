@@ -3280,6 +3280,10 @@
                                     .videos .card img {
                                       width: 160px;
                                       height: auto;
+                                      min-height: 90px;
+                                    }
+                                    .videos .card .card-text {
+                                      width: calc(100% - 160px);
                                     }
                                     @media(max-width: 620px) {
                                       .videos .card {
